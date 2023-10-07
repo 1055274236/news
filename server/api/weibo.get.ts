@@ -41,24 +41,18 @@ export default defineEventHandler(async (event) => {
 
   if (result?.data) {
     const $ = load(result.data);
-    const ranktopHtml = $('tbody').find('tr').toArray();
-    for (let i = 0; i < ranktopHtml.length; i++) {
-      let id = ranktopHtml[i].children[1].children[0].data;
-      let hot = /\d+/.exec(
-        ranktopHtml[i].children[3].children[3]?.children[0].data
-      );
-
-      if (cate !== 'socialevent' && !/^\d+$/.test(id)) continue;
-
-      data.push({
-        id,
-        title: ranktopHtml[i].children[3].children[1].children[0].data,
-        hot: (hot && Number(hot[0])) || 0,
-        url:
-          'https://s.weibo.com' +
-          ranktopHtml[i].children[3].children[1].attribs['href'],
-      });
-    }
+    $('tbody tr').each((_, el) => {
+      let id = $(el).find('.td-01').text(),
+        hot = $(el).find('.td-02 span').text();
+      if (cate === 'socialevent' || /^\d+$/.test(id)) {
+        data.push({
+          id: Number(id),
+          title: $(el).find('.td-02 a').text(),
+          hot: (hot && Number(hot)) || 0,
+          url: 'https://s.weibo.com' + $(el).find('.td-02 a').attr('href'),
+        });
+      }
+    });
   }
 
   return isErr ? NetErrorMessage('网络错误！', isErr) : SuccessMessage(data);
