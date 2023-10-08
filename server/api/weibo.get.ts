@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { SuccessMessage, NetErrorMessage } from '../basemessage';
+import { WEIBOWEB } from './type';
 
 /*
   realtimehot 热搜
@@ -15,14 +16,15 @@ export default defineEventHandler(async (event) => {
   let query = getQuery(event),
     cate = query.cate as string;
   FLAG.indexOf(cate) === -1 && (cate = 'realtimehot');
+  try {
+    return SuccessMessage(await getWeb(cate));
+  } catch (e) {
+    return NetErrorMessage(e);
+  }
+});
 
-  let isErr: any;
-  let data: {
-    id: number;
-    title: string;
-    url: string;
-    hot: number;
-  }[] = [];
+export const getWeb = async (cate: string = 'realtimehot') => {
+  let data: WEIBOWEB[] = [];
   const result = await axios({
     method: 'get',
     url: `https://s.weibo.com/top/summary?cate=${cate}`,
@@ -35,8 +37,6 @@ export default defineEventHandler(async (event) => {
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
     },
-  }).catch((e) => {
-    isErr = e;
   });
 
   if (result?.data) {
@@ -55,5 +55,5 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return isErr ? NetErrorMessage('网络错误！', isErr) : SuccessMessage(data);
-});
+  return data;
+};

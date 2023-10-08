@@ -13,8 +13,8 @@ export function SuccessMessage(data: unknown): MESSAGE<unknown> {
 }
 
 export function NetErrorMessage(
-  message: string,
-  data: unknown
+  data: unknown,
+  message: string = '网络错误！'
 ): MESSAGE<unknown> {
   return {
     code: 500,
