@@ -67,7 +67,7 @@ const toTop = (): void => {
   width: 100vw;
   transition: all 0.5s ease;
   font-size: 20px;
-  backdrop-filter: saturate(50%) blur(4px);
+  z-index: 99;
 
   .navtop-back {
     display: block;
@@ -80,6 +80,8 @@ const toTop = (): void => {
     line-height: 60px;
     height: 60px;
     overflow: hidden;
+    background-color: #f4f4f480;
+    backdrop-filter: saturate(50%) blur(4px);
 
     .navtop-body {
       .title {
