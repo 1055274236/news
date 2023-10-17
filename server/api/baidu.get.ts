@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { BAIDUREALTIME } from './type';
-import { SuccessMessage, NetErrorMessage } from '../basemessage';
+import { SuccessMessage, NetErrorMessage, MESSAGE } from '../basemessage';
 
 /*
   realtime 热搜
@@ -12,12 +12,9 @@ export default defineEventHandler(async (event) => {
   let query = getQuery(event),
     tab = query.tab as string;
   FLAG.indexOf(tab) === -1 && (tab = FLAG[0]);
-  try {
-    if (tab === 'realtime') {
-      return SuccessMessage(await getRealtime());
-    }
-  } catch (e) {
-    return NetErrorMessage(e);
+  if (tab === 'realtime') {
+    return SuccessMessage(await getRealtime());
+    //  as MESSAGE<BAIDUREALTIME>;
   }
 });
 

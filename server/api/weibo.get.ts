@@ -48,7 +48,7 @@ export const getWeb = async (cate: string = 'realtimehot') => {
         data.push({
           id: Number(id),
           title: $(el).find('.td-02 a').text(),
-          hot: (hot && Number(hot)) || 0,
+          hot: (hot && Number(hot.replace(/\D/g, ''))) || 0,
           url: 'https://s.weibo.com' + $(el).find('.td-02 a').attr('href'),
         });
       }

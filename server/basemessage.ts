@@ -1,7 +1,7 @@
-interface MESSAGE<DataT> {
+export interface MESSAGE<DataT> {
   code: number;
-  message?: string;
-  data?: DataT;
+  message: string;
+  data: DataT;
 }
 
 export function SuccessMessage(data: unknown): MESSAGE<unknown> {
