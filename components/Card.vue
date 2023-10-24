@@ -88,7 +88,8 @@ const numberSuffix = (n: number) => {
     .card-item {
       display: flex;
       justify-content: space-between;
-      margin: 1px 0;
+      align-items: flex-end;
+      margin: 3px 0;
 
       .id {
         width: 20px;
@@ -100,8 +101,15 @@ const numberSuffix = (n: number) => {
         text-overflow: ellipsis;
       }
       .hot {
-        width: 55px;
+        min-width: 55px;
       }
+    }
+  }
+}
+@media screen and (min-width: 751px) {
+  .card-item {
+    .hot {
+      min-width: 70px !important;
     }
   }
 }

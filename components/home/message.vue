@@ -77,6 +77,7 @@ getRealtime();
     display: flex;
     width: 95vw;
     height: 100%;
+    font-size: 14px;
 
     & > * {
       flex: 1;
