@@ -87,7 +87,7 @@ const numberSuffix = (n: number) => {
 
     .card-item {
       display: flex;
-      // grid-template-columns: 20px 1fr 50px;
+      justify-content: space-between;
       margin: 1px 0;
 
       .id {
@@ -100,7 +100,7 @@ const numberSuffix = (n: number) => {
         text-overflow: ellipsis;
       }
       .hot {
-        width: 50px;
+        width: 55px;
       }
     }
   }

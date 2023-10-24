@@ -7,11 +7,6 @@ import {
   BiliBiliFill,
   BaiDuFill,
 } from '~/components/icon';
-interface CardType {
-  title: string;
-  url: string;
-  hot: number | string;
-}
 
 const data = reactive({
   inter: setTimeout(() => {}, 1000),
@@ -30,14 +25,9 @@ const data = reactive({
     bilibili: false,
     baidu: false,
   },
-  message: {
-    weibo: [] as CardType[],
-    bilibili: [] as CardType[],
-    zhihu: [] as CardType[],
-    baidu: [] as CardType[],
-  },
   navShow: false,
 });
+onBeforeMount(() => init());
 onMounted(() => {});
 onBeforeUnmount(() => {
   data.inter && clearInterval(data.inter);
@@ -64,37 +54,6 @@ const init = () => {
     initDate();
   }, 1000);
 };
-init();
-
-// 爬取热点
-const getRealtime = async () => {
-  const result = (await useFetch('/api/home')).data.value;
-
-  if (result) {
-    data.message.baidu = result.data.baidu.map((item) => ({
-      title: item.title,
-      url: item.url,
-      hot: item.hot,
-    }));
-    data.message.bilibili = result.data.bili.map((item) => ({
-      title: item.show_name,
-      url:
-        item.uri || `https://search.bilibili.com/all?keyword=${item.keyword}`,
-      hot: 0,
-    }));
-    data.message.weibo = result.data.weibo.map((item) => ({
-      title: item.title,
-      url: item.url,
-      hot: item.hot,
-    }));
-    data.message.zhihu = result.data.zhihu.data.map((item) => ({
-      title: item.question.title,
-      url: item.question.url,
-      hot: 0,
-    }));
-  }
-};
-getRealtime();
 </script>
 
 <template>
@@ -114,13 +73,8 @@ getRealtime();
         </div>
       </div>
 
-      <div class="home-message">
-        <div class="message-back">
-          <Card :icon="'weibo'" :list="data.message.weibo"></Card>
-          <Card :icon="'baidu'" :list="data.message.baidu"></Card>
-          <Card :icon="'zhihu'" :list="data.message.zhihu"></Card>
-          <Card :icon="'bilibili'" :list="data.message.bilibili"></Card>
-        </div>
+      <div class="content">
+        <HomeMessage />
       </div>
     </div>
   </div>
@@ -154,7 +108,7 @@ getRealtime();
   top: 0;
   right: 0;
   bottom: 0;
-  transition: background 0.3s, transform 0.3s, height 0.3s;
+  // transition: background 0.3s, transform 0.3s, height 0.3s;
   background-size: cover;
   background-position: 50%;
   z-index: 0;
@@ -184,16 +138,12 @@ getRealtime();
         }
       }
     }
-  }
 
-  .home-message {
-    margin-top: 8vh;
-    width: 95%;
-    font-size: 12px;
-    .message-back {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      grid-gap: 2rem 10px;
+    .content {
+      padding-top: 8vh;
+      width: 95%;
+      height: 70vh;
+      overflow-y: auto;
     }
   }
 }
