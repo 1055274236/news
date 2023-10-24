@@ -69,7 +69,7 @@ getRealtime();
   .message-back {
     display: grid;
     grid-gap: 2rem 10px;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
   }
 }
 @media screen and (min-width: 751px) {
