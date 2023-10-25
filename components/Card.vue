@@ -102,6 +102,7 @@ const numberSuffix = (n: number) => {
       }
       .hot {
         min-width: 55px;
+        text-align: right;
       }
     }
   }
