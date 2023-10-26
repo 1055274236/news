@@ -1,16 +1,27 @@
 import axios from 'axios';
 import { SuccessMessage, NetErrorMessage } from '../basemessage';
 import { BILIBILIAPI } from './type';
+import { find, insert } from '../db';
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   let limit = (query.limit as number) || 20;
-  try {
-    return SuccessMessage(await getApi(limit));
-  } catch (e) {
-    return NetErrorMessage(e);
-  }
+  return SuccessMessage(await getData(limit));
 });
+
+export const getData = async (limit: number = 20) => {
+  let data: BILIBILIAPI[] = [];
+  const query = { limit };
+  await find('bili', query)
+    .then((dbData) => {
+      data = dbData.data as BILIBILIAPI[];
+    })
+    .catch(async () => {
+      data = await getApi();
+      insert('bili', data, query);
+    });
+  return data;
+};
 
 export const getApi = async (limit: number = 20): Promise<BILIBILIAPI[]> => {
   const data: BILIBILIAPI[] = [];

@@ -63,7 +63,7 @@ export interface Paging {
 
 export interface ZHIHUAPI {
   data: Data[];
-  paging: Paging;
+  paging?: Paging;
 }
 
 // bilibili
@@ -90,4 +90,10 @@ export interface BAIDUREALTIME {
   details: string;
   url: string;
   hot: number;
+}
+
+export interface HOMEBASEMESSAGE {
+  title: string;
+  hot: number;
+  url: string;
 }

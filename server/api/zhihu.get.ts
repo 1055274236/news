@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { SuccessMessage, NetErrorMessage } from '../basemessage';
 import { ZHIHUAPI } from './type';
+import { find, insert } from '../db';
 
 /*
   '全部', '数码', '科技', '互联网', '商业财经', '职场', '教育', '法律', '军事', '汽车',
@@ -52,12 +53,29 @@ export default defineEventHandler(async (event) => {
   domainArr.indexOf(domain) === -1 && (domain = '0');
   periodArr.indexOf(period) === -1 && (period = 'hour');
 
-  try {
-    return SuccessMessage(await getApi(domain, period, offect, limit));
-  } catch (e) {
-    return NetErrorMessage(e);
-  }
+  return SuccessMessage(await getData(domain, period, offect, limit));
 });
+
+export const getData = async (
+  domain: string = '0',
+  period: string = 'hour',
+  offect: number = 0,
+  limit: number = 20
+) => {
+  let data: ZHIHUAPI = {
+    data: [],
+  };
+  const query = { domain, period, offect, limit };
+  await find('zhihu', query)
+    .then((dbData) => {
+      data = dbData.data as ZHIHUAPI;
+    })
+    .catch(async () => {
+      data = await getApi();
+      insert('zhihu', data, query);
+    });
+  return data;
+};
 
 export const getApi = async (
   domain: string = '0',
@@ -65,12 +83,15 @@ export const getApi = async (
   offect: number = 0,
   limit: number = 20
 ) => {
+  let data: ZHIHUAPI = {
+    data: [],
+  };
   const result = await axios({
     method: 'get',
     url: `https://www.zhihu.com/api/v4/creators/rank/hot?domain=${domain}&limit=${limit}&offset=${offect}&period=${period}`,
   });
 
-  if (result?.data) {
-    return result.data as ZHIHUAPI;
-  }
+  result && (data = result.data);
+
+  return data;
 };

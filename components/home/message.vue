@@ -21,27 +21,10 @@ const getRealtime = async () => {
   const result = (await useFetch('/api/home')).data.value;
 
   if (result) {
-    data.message.baidu = result.data.baidu.map((item) => ({
-      title: item.title,
-      url: item.url,
-      hot: item.hot,
-    }));
-    data.message.bilibili = result.data.bili.map((item) => ({
-      title: item.show_name,
-      url:
-        item.uri || `https://search.bilibili.com/all?keyword=${item.keyword}`,
-      hot: 0,
-    }));
-    data.message.weibo = result.data.weibo.map((item) => ({
-      title: item.title,
-      url: item.url,
-      hot: item.hot,
-    }));
-    data.message.zhihu = result.data.zhihu.data.map((item) => ({
-      title: item.question.title,
-      url: item.question.url,
-      hot: 0,
-    }));
+    data.message.baidu = result.data.baidu;
+    data.message.bilibili = result.data.bili;
+    data.message.weibo = result.data.weibo;
+    data.message.zhihu = result.data.zhihu;
   }
 };
 getRealtime();

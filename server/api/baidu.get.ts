@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { BAIDUREALTIME } from './type';
-import { SuccessMessage, NetErrorMessage, MESSAGE } from '../basemessage';
+import { SuccessMessage } from '../basemessage';
+import { find, insert } from '../db';
 
 /*
   realtime 热搜
@@ -12,11 +13,21 @@ export default defineEventHandler(async (event) => {
   let query = getQuery(event),
     tab = query.tab as string;
   FLAG.indexOf(tab) === -1 && (tab = FLAG[0]);
-  if (tab === 'realtime') {
-    return SuccessMessage(await getRealtime());
-    //  as MESSAGE<BAIDUREALTIME>;
-  }
+  return SuccessMessage(await getRealtime());
 });
+
+export const getData = async () => {
+  let data: BAIDUREALTIME[] = [];
+  await find('baidu')
+    .then((dbData) => {
+      data = dbData.data as BAIDUREALTIME[];
+    })
+    .catch(async () => {
+      data = await getRealtime();
+      insert('baidu', data);
+    });
+  return data;
+};
 
 export const getRealtime = async () => {
   let data: BAIDUREALTIME[] = [];

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { SuccessMessage, NetErrorMessage } from '../basemessage';
 import { WEIBOWEB } from './type';
+import { find, insert } from '../db';
 
 /*
   realtimehot 热搜
@@ -16,12 +17,23 @@ export default defineEventHandler(async (event) => {
   let query = getQuery(event),
     cate = query.cate as string;
   FLAG.indexOf(cate) === -1 && (cate = 'realtimehot');
-  try {
-    return SuccessMessage(await getWeb(cate));
-  } catch (e) {
-    return NetErrorMessage(e);
-  }
+  return SuccessMessage(await getData(cate));
 });
+
+export const getData = async (cate: string = 'realtimehot') => {
+  let data: WEIBOWEB[] = [];
+
+  await find('weibo', { cate })
+    .then(async (dbData) => {
+      data = dbData.data as WEIBOWEB[];
+    })
+    .catch(async () => {
+      data = await getWeb();
+      insert('weibo', data, { cate });
+    });
+
+  return data;
+};
 
 export const getWeb = async (cate: string = 'realtimehot') => {
   let data: WEIBOWEB[] = [];
