@@ -4,8 +4,9 @@ const password = 'thisispassword';
 const uri = `mongodb+srv://${username}:${password}@cluster0.ux78xzw.mongodb.net/?retryWrites=true&w=majority`;
 
 let client: MongoClient = new MongoClient(uri, {
-  maxPoolSize: 5,
-  minPoolSize: 3,
+  maxPoolSize: 8,
+  minPoolSize: 4,
+  connectTimeoutMS: 3000,
 });
 type apiType = 'zhihu' | 'bili' | 'baidu' | 'weibo';
 interface DATABASE<dataT> {
