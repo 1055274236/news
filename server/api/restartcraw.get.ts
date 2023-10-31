@@ -1,5 +1,5 @@
 import config from '~/config';
-import { insert, insertError } from '../db';
+import { deleteByDate, insert, insertError } from '../db';
 import { getApi as biliData } from './bilibili.get';
 import { getRealtime } from './baidu.get';
 import { getWeb } from './weibo.get';
@@ -99,6 +99,7 @@ export const startCraw = () => {
     () => {
       start = new Date().getTime();
       getNews();
+      deleteByDate();
     },
     config.server.interval > 600000 ? config.server.interval : 600000
   );

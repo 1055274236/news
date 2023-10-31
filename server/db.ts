@@ -81,6 +81,20 @@ export function insert(
   });
 }
 
+export function deleteByDate() {
+  return new Promise((resolve, reject) => {
+    const date = ((new Date().getTime() / 1000) | 0) - config.server.dbcache;
+    Promise.allSettled([
+      reMainCol('baidu').deleteMany({ date: { $lt: date } }),
+      reMainCol('zhihu').deleteMany({ date: { $lt: date } }),
+      reMainCol('weibo').deleteMany({ date: { $lt: date } }),
+      reMainCol('bili').deleteMany({ date: { $lt: date } }),
+    ])
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
 export function insertError(data: any) {
   return new Promise((resolve, reject) => {
     try {
