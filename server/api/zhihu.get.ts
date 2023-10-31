@@ -48,25 +48,25 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   let domain = (query.domain as string) || '',
     period = (query.period as string) || '',
-    offect = Number(query.offect as string) || 0,
+    offset = Number(query.offset as string) || 0,
     limit = Number(query.limit as string) || 20;
 
   domainArr.indexOf(domain) === -1 && (domain = '0');
   periodArr.indexOf(period) === -1 && (period = 'hour');
 
-  return SuccessMessage(await getData(domain, period, offect, limit));
+  return SuccessMessage(await getData(domain, period, offset, limit));
 });
 
 export const getData = async (
   domain: string = '0',
   period: string = 'hour',
-  offect: number = 0,
+  offset: number = 0,
   limit: number = 20
 ) => {
   let data: ZHIHUAPI = {
     data: [],
   };
-  const query = { domain, period, offect, limit };
+  const query = { domain, period, offset, limit };
 
   if (config.server.useDB) {
     await find('zhihu', query)
@@ -87,7 +87,7 @@ export const getData = async (
 export const getApi = async (
   domain: string = '0',
   period: string = 'hour',
-  offect: number = 0,
+  offset: number = 0,
   limit: number = 20
 ) => {
   let data: ZHIHUAPI = {
@@ -95,7 +95,7 @@ export const getApi = async (
   };
   const result = await axios({
     method: 'get',
-    url: `https://www.zhihu.com/api/v4/creators/rank/hot?domain=${domain}&limit=${limit}&offset=${offect}&period=${period}`,
+    url: `https://www.zhihu.com/api/v4/creators/rank/hot?domain=${domain}&limit=${limit}&offset=${offset}&period=${period}`,
   });
 
   result && (data = result.data);
