@@ -1,23 +1,25 @@
 import { MongoClient, WithId, InsertOneResult } from 'mongodb';
-const username = 'news';
-const password = 'thisispassword';
-const uri = `mongodb+srv://${username}:${password}@cluster0.ux78xzw.mongodb.net/?retryWrites=true&w=majority`;
+import config from '@/config/index';
+const uri = config.server.db.uri;
 
 let client: MongoClient = new MongoClient(uri, {
-  maxPoolSize: 8,
-  minPoolSize: 4,
-  connectTimeoutMS: 3000,
+  maxConnecting: config.server.db.maxConnecting || 6,
+  maxPoolSize: config.server.db.maxPoolSize || 8,
+  minPoolSize: config.server.db.minPoolSize || 4,
+  connectTimeoutMS: config.server.db.connectTimeoutMS || 3000,
 });
-type apiType = 'zhihu' | 'bili' | 'baidu' | 'weibo';
+type colType = 'zhihu' | 'bili' | 'baidu' | 'weibo' | 'error';
 interface DATABASE<dataT> {
   date: number;
   data: dataT;
 }
 
-function reMainCol(coll: apiType) {
+function reMainCol(coll: colType) {
   const database = client.db('news');
 
   switch (coll) {
+    case 'error':
+      return database.collection<DATABASE<any>>('error');
     case 'baidu':
       return database.collection<DATABASE<any>>('baidu');
     case 'zhihu':
@@ -30,16 +32,19 @@ function reMainCol(coll: apiType) {
 }
 
 export async function find(
-  coll: apiType,
+  coll: colType,
   query: { [key: string]: number | string } = {}
 ): Promise<WithId<DATABASE<any>>> {
   return new Promise((resolve, reject) => {
     try {
-      const date = ((new Date().getTime() / 1000 / 3600) | 0) * 3600;
+      const date = (new Date().getTime() / 1000) | 0;
       const mainC = reMainCol(coll);
 
       mainC
-        .findOne({ date, ...query })
+        .findOne(
+          { date: { $gt: date - 3600 }, ...query },
+          { sort: { date: -1 } }
+        )
         .then((ans) => {
           ans === null ? reject('Null') : resolve(ans);
         })
@@ -53,17 +58,37 @@ export async function find(
 }
 
 export function insert(
-  coll: apiType,
+  coll: colType,
   data: any,
   query: { [key: string]: number | string } = {}
 ): Promise<InsertOneResult<DATABASE<any>>> {
   return new Promise((resolve, reject) => {
     try {
-      const date = ((new Date().getTime() / 1000 / 3600) | 0) * 3600;
+      const date = (new Date().getTime() / 1000) | 0;
       const mainC = reMainCol(coll);
 
       mainC
         .insertOne({ date, data, ...query })
+        .then((ans) => {
+          resolve(ans);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+export function insertError(data: any) {
+  return new Promise((resolve, reject) => {
+    try {
+      const date = new Date().getTime();
+      const mainC = reMainCol('error');
+
+      mainC
+        .insertOne({ date, data })
         .then((ans) => {
           resolve(ans);
         })

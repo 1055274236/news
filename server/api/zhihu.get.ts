@@ -2,6 +2,7 @@ import axios from 'axios';
 import { SuccessMessage, NetErrorMessage } from '../basemessage';
 import { ZHIHUAPI } from './type';
 import { find, insert } from '../db';
+import config from '~/config';
 
 /*
   '全部', '数码', '科技', '互联网', '商业财经', '职场', '教育', '法律', '军事', '汽车',
@@ -66,14 +67,20 @@ export const getData = async (
     data: [],
   };
   const query = { domain, period, offect, limit };
-  await find('zhihu', query)
-    .then((dbData) => {
-      data = dbData.data as ZHIHUAPI;
-    })
-    .catch(async () => {
-      data = await getApi();
-      insert('zhihu', data, query);
-    });
+
+  if (config.server.useDB) {
+    await find('zhihu', query)
+      .then((dbData) => {
+        data = dbData.data as ZHIHUAPI;
+      })
+      .catch(async () => {
+        data = await getApi();
+        insert('zhihu', data, query);
+      });
+  } else {
+    data = await getApi();
+  }
+
   return data;
 };
 

@@ -10,6 +10,6 @@ export const wait = (): Promise<void> => {
   return new Promise((resole) => {
     setTimeout(() => {
       resole();
-    }, Math.round(Math.random() * 500) + 500);
+    }, Math.round(Math.random() * 500) + 1500);
   });
 };

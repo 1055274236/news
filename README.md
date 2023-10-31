@@ -7,17 +7,8 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 Make sure to install the dependencies:
 
 ```bash
-# npm
-npm install
-
 # pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
@@ -25,17 +16,8 @@ bun install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
 # pnpm
 pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
@@ -43,33 +25,12 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
-npm run build
-
 # pnpm
 pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+## 用前须知
 
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
+如果使用 Mongodb 数据库，那么请在 [设置](./config/index.ts) 中修改基本参数，如果不使用也请在设置中关闭 useDB 参数，防止资源损耗。使用数据库并有持续爬取数据需求的话还必须开启 crawling 参数，并且访问首页一次，如未开启参数，可以访问 /restartcraw 启动数据爬取功能。
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

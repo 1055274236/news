@@ -2,6 +2,7 @@ import axios from 'axios';
 import { SuccessMessage, NetErrorMessage } from '../basemessage';
 import { BILIBILIAPI } from './type';
 import { find, insert } from '../db';
+import config from '~/config';
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -12,14 +13,20 @@ export default defineEventHandler(async (event) => {
 export const getData = async (limit: number = 20) => {
   let data: BILIBILIAPI[] = [];
   const query = { limit };
-  await find('bili', query)
-    .then((dbData) => {
-      data = dbData.data as BILIBILIAPI[];
-    })
-    .catch(async () => {
-      data = await getApi();
-      insert('bili', data, query);
-    });
+
+  if (config.server.useDB) {
+    await find('bili', query)
+      .then((dbData) => {
+        data = dbData.data as BILIBILIAPI[];
+      })
+      .catch(async () => {
+        data = await getApi();
+        insert('bili', data, query);
+      });
+  } else {
+    data = await getApi();
+  }
+
   return data;
 };
 

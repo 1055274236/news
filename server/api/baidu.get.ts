@@ -3,6 +3,7 @@ import { load } from 'cheerio';
 import { BAIDUREALTIME } from './type';
 import { SuccessMessage } from '../basemessage';
 import { find, insert } from '../db';
+import config from '~/config';
 
 /*
   realtime 热搜
@@ -18,14 +19,20 @@ export default defineEventHandler(async (event) => {
 
 export const getData = async () => {
   let data: BAIDUREALTIME[] = [];
-  await find('baidu')
-    .then((dbData) => {
-      data = dbData.data as BAIDUREALTIME[];
-    })
-    .catch(async () => {
-      data = await getRealtime();
-      insert('baidu', data);
-    });
+
+  if (config.server.useDB) {
+    await find('baidu')
+      .then((dbData) => {
+        data = dbData.data as BAIDUREALTIME[];
+      })
+      .catch(async () => {
+        data = await getRealtime();
+        insert('baidu', data);
+      });
+  } else {
+    data = await getRealtime();
+  }
+
   return data;
 };
 
