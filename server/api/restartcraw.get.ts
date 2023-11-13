@@ -94,7 +94,6 @@ export const startCraw = () => {
   if (isStart) return;
   isStart = true;
   start = new Date().getTime();
-  getNews();
   interval = setInterval(
     () => {
       start = new Date().getTime();
